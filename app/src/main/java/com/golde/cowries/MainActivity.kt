@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
@@ -28,6 +29,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import io.realm.Realm
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,17 +37,39 @@ class MainActivity : AppCompatActivity() {
     private var toCurr = "NGN"
     private var fromCurr = "USD"
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.landing_toolbar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        if(cvm.repo.rates.isEmpty()){
+            //Listen for new rates
+            cvm.listen4Rates()
+
+           //get historical Rates
+            cvm.historicalRates30()
+
+            container.visibility = View.INVISIBLE
+            Toast.makeText(this, "Trying to download rates", Toast.LENGTH_LONG).show()
+
+            cvm.rates.observeForever {
+                if(!cvm.rates.value!!.isEmpty())
+                    readyActions()
+            }
+        }else{
+            readyActions()
+        }
+
+    }
+
+    private fun readyActions(){
         //Listen for new rates
         cvm.listen4Rates()
 
 //        //get historical Rates
-//        cvm.historicalRates30()
+        cvm.historicalRates30()
 
         //monitor the rate value
         cvm.toRate.observeForever {
@@ -68,11 +92,13 @@ class MainActivity : AppCompatActivity() {
             input_to.setText(it.toString())
         }
 
-
+        cvm.progressBarView.observeForever {
+            pbar.visibility = it
+        }
 
         from_btn.setOnClickListener {
             MaterialDialog(this).title(R.string.select_currency).show {
-                listItemsSingleChoice(items = cvm.offerListOfCurrencies()){ _, index, text ->
+                listItemsSingleChoice(items = cvm.offerListOfCurrencies()){ _, index, _ ->
                     this@MainActivity.fromCurr = cvm.offerListOfCurrencies()[index]
                     updateBus()
                 }
@@ -90,18 +116,18 @@ class MainActivity : AppCompatActivity() {
 
         convert_btn.setOnClickListener {
             cvm.convert(input_from.text.toString().trim().toDouble())
-            if(cvm.checkPointsStatus()){
-                cvm.initCheckPoints()
-                cvm.checkpoints.observeForever {
-                    if(it.isNotEmpty()){
-                        drawGraph(it)
-                    }
-                }
+
+            cvm.initCheckPoints()
+        }
+
+        cvm.checkpoints.observeForever {
+            if(it.isNotEmpty()){
+                drawGraph(it)
             }
         }
 
-
         updateBus()
+        container.visibility = View.VISIBLE
     }
 
     //trigger Event Bus
