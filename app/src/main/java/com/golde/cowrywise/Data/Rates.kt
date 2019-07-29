@@ -1,4 +1,4 @@
-package com.golde.cowries.Data
+package com.golde.cowrywise.Data
 
 import io.realm.RealmObject
 

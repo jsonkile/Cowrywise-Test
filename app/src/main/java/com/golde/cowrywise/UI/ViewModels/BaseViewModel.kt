@@ -1,9 +1,9 @@
-package com.golde.cowries.UI.ViewModels
+package com.golde.cowrywise.UI.ViewModels
 
 import androidx.lifecycle.ViewModel
-import com.golde.cowries.Injection.Component.DaggerViewModelInjector
-import com.golde.cowries.Injection.Component.ViewModelInjector
-import com.golde.cowries.Injection.Module.NetworkModule
+import com.golde.cowrywise.Injection.Component.DaggerViewModelInjector
+import com.golde.cowrywise.Injection.Component.ViewModelInjector
+import com.golde.cowrywise.Injection.Module.NetworkModule
 
 
 abstract class BaseViewModel: ViewModel(){

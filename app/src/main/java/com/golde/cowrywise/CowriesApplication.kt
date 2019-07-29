@@ -1,4 +1,4 @@
-package com.golde.cowries
+package com.golde.cowrywise
 
 import android.app.Application
 import io.realm.Realm

@@ -1,14 +1,14 @@
-package com.golde.cowries.UI.ViewModels
+package com.golde.cowrywise.UI.ViewModels
 
+import android.app.Activity
 import android.view.View
 import androidx.lifecycle.MutableLiveData
-import com.golde.cowries.Data.Rates
-import com.golde.cowries.Data.Repo
+import com.golde.cowrywise.Data.Rates
+import com.golde.cowrywise.Data.Repo
 import io.realm.RealmResults
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.jetbrains.annotations.Nullable
 import kotlin.coroutines.CoroutineContext
 
 class ConversionViewModel : BaseViewModel() {

@@ -29,4 +29,9 @@
         <item name="android:fontFamily">@font/monts_bold</item>
     </style>
 
+    <style name="MontsTextAppearance">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/monts_medium</item>
+    </style>
+
 </resources>

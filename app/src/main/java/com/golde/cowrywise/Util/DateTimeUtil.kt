@@ -1,4 +1,4 @@
-package com.golde.cowries.Util
+package com.golde.cowrywise.Util
 
 import com.soywiz.klock.DateFormat
 import com.soywiz.klock.DateTime

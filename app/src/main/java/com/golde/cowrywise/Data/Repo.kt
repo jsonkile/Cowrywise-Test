@@ -1,40 +1,47 @@
-package com.golde.cowries.Data
+package com.golde.cowrywise.Data
 
+import android.app.Activity
 import android.util.Log
-import androidx.annotation.WorkerThread
-import com.golde.cowries.Network.FixerApi
-import com.golde.cowries.Util.DateTimeUtil
+import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.golde.cowrywise.Network.FixerApi
+import com.golde.cowrywise.Util.DateTimeUtil
+import com.golde.cowrywise.Util.REALM_KEY
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.soywiz.klock.DateTime
 import com.soywiz.klock.days
-import io.reactivex.Observable
 import io.realm.Realm
 import io.realm.RealmResults
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
-import retrofit2.Response
 import java.io.IOException
-import javax.inject.Inject
+import java.lang.IllegalStateException
 
 class Repo() {
     val fixerApi by lazy {
         FixerApi.create()
     }
+    val key = Realm.getDefaultInstance().where(Bits::class.java).equalTo("id", REALM_KEY).findFirst()?.apiKey
     val rates  = Realm.getDefaultInstance().where(Rates::class.java).findAll()
     val TAG = "Repo report"
     var cpSuccess : Boolean = false
     var dates : Array<String> = arrayOf()
     var checkpoints : MutableMap<String, Double> = mutableMapOf<String, Double>()
+    var apiState = MutableLiveData<Boolean>(true)
 
     suspend fun downloadRatesAndUpdateRealm() {
         try {
-            if(fixerApi.getRatesAsync().isSuccessful){
-                val rates = Gson().fromJson(fixerApi.getRatesAsync().body(), JsonObject::class.java).getAsJsonObject("rates")
-                Log.d(TAG,"Data downloaded Successfully!")
-                writeToRealm(rates)
+            if(fixerApi.getRatesAsync(key!!).isSuccessful){
+                try {
+                    val rates = Gson().fromJson(fixerApi.getRatesAsync(key).body(), JsonObject::class.java).getAsJsonObject("rates")
+                    Log.d(TAG,"Data downloaded Successfully!")
+                    writeToRealm(rates)
+                }catch (e : IllegalStateException){
+                    apiState.postValue(false)
+
+                }
             }else{
                 Log.d(TAG,"Data download failed!")
             }
@@ -62,15 +69,19 @@ class Repo() {
         cpSuccess = false
         GlobalScope.launch {
             try {
-                Log.d("DateTimez =>", DateTimeUtil.format(DateTime.now() - 6.days))
-                val six = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 6.days), "${symbols[0]},${symbols[1]}")
-                val twelve = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 12.days), "${symbols[0]},${symbols[1]}")
-                val ayteen = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 18.days), "${symbols[0]},${symbols[1]}")
-                val twenti4 = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 24.days), "${symbols[0]},${symbols[1]}")
-                val tety = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 30.days), "${symbols[0]},${symbols[1]}")
-                val dates = arrayOf(DateTimeUtil.format2(DateTime.now() - 6.days), DateTimeUtil.format2(DateTime.now() - 12.days),DateTimeUtil.format2(DateTime.now() - 18.days),DateTimeUtil.format2(DateTime.now() - 24.days),DateTimeUtil.format2(DateTime.now() - 30.days))
-                this@Repo.dates = dates
-                successHandler(six.body(), twelve.body(), ayteen.body(), twenti4.body(), tety.body(), symbols)
+                try {
+                    val six = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 6.days), "${symbols[0]},${symbols[1]}", key!!)
+                    val twelve = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 12.days), "${symbols[0]},${symbols[1]}", key)
+                    val ayteen = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 18.days), "${symbols[0]},${symbols[1]}", key)
+                    val twenti4 = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 24.days), "${symbols[0]},${symbols[1]}", key)
+                    val tety = fixerApi.getHistoricalRatesAsync(DateTimeUtil.format(DateTime.now() - 30.days), "${symbols[0]},${symbols[1]}", key)
+                    Log.d("DateTimez =>", DateTimeUtil.format(DateTime.now() - 6.days))
+                    val dates = arrayOf(DateTimeUtil.format2(DateTime.now() - 6.days), DateTimeUtil.format2(DateTime.now() - 12.days),DateTimeUtil.format2(DateTime.now() - 18.days),DateTimeUtil.format2(DateTime.now() - 24.days),DateTimeUtil.format2(DateTime.now() - 30.days))
+                    this@Repo.dates = dates
+                    successHandler(six.body(), twelve.body(), ayteen.body(), twenti4.body(), tety.body(), symbols)
+                }catch (e : IllegalStateException){
+                    apiState.postValue(false)
+                }
             } catch (exception: IOException) {
                 Log.e("TAG", exception.message)
                 cpSuccess = false

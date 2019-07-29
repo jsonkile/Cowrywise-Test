@@ -1,14 +1,11 @@
-package com.golde.cowries.Injection.Module
+package com.golde.cowrywise.Injection.Module
 
-import com.golde.cowries.Network.FixerApi
-import com.golde.cowries.Util.BASE_URL
+import com.golde.cowrywise.Network.FixerApi
+import com.golde.cowrywise.Util.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
-import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 /**

@@ -1,7 +1,7 @@
-package com.golde.cowries.Injection.Component
+package com.golde.cowrywise.Injection.Component
 
-import com.golde.cowries.Injection.Module.NetworkModule
-import com.golde.cowries.UI.ViewModels.ConversionViewModel
+import com.golde.cowrywise.Injection.Module.NetworkModule
+import com.golde.cowrywise.UI.ViewModels.ConversionViewModel
 import dagger.Component
 import javax.inject.Singleton
 

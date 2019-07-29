@@ -1,24 +1,23 @@
-package com.golde.cowries
+package com.golde.cowrywise
 
-import android.graphics.DashPathEffect
+import android.content.Intent
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
-import com.golde.cowries.UI.ViewModels.ConversionViewModel
+import com.golde.cowrywise.UI.ViewModels.ConversionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import com.github.mikephil.charting.data.LineDataSet
@@ -29,7 +28,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import io.realm.Realm
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,19 +35,30 @@ class MainActivity : AppCompatActivity() {
     private var toCurr = "NGN"
     private var fromCurr = "USD"
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.landing_toolbar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        chart.setNoDataText("Tap the convert button")
+        chart.setNoDataTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
+        chart.setNoDataTextTypeface(Typeface.createFromAsset(this.assets, "monts_medium.ttf"))
+
+        cvm.repo.apiState.observeForever {
+            if (!it){
+                Toast.makeText(this@MainActivity, "Could not read from Fixer.io - Please check your API key.", Toast.LENGTH_LONG).show()
+                startActivity(Intent(this@MainActivity, ApiKeyActivity::class.java))
+                finish()
+            }
+        }
+
         if(cvm.repo.rates.isEmpty()){
             //Listen for new rates
             cvm.listen4Rates()
 
            //get historical Rates
-            cvm.historicalRates30()
+            //cvm.historicalRates30()
 
             container.visibility = View.INVISIBLE
             Toast.makeText(this, "Trying to download rates", Toast.LENGTH_LONG).show()
@@ -69,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         cvm.listen4Rates()
 
 //        //get historical Rates
-        cvm.historicalRates30()
+        //cvm.historicalRates30()
 
         //monitor the rate value
         cvm.toRate.observeForever {
@@ -116,7 +125,7 @@ class MainActivity : AppCompatActivity() {
 
         convert_btn.setOnClickListener {
             cvm.convert(input_from.text.toString().trim().toDouble())
-
+            chart.setNoDataText("Loading...")
             cvm.initCheckPoints()
         }
 
@@ -181,13 +190,11 @@ class MainActivity : AppCompatActivity() {
         chart.axisRight.isEnabled = false
         chart.axisLeft.isEnabled = false
 
-        chart.setNoDataText("Select currencies and click the convert button to see the graph.")
-        chart.setNoDataTextTypeface(Typeface.createFromAsset(this.assets, "monts_medium.ttf"))
 
 
         chart.isClickable = false
         chart.axisLeft.spaceBottom = 70F
-        chart.axisLeft.spaceTop = 10F
+        chart.axisLeft.spaceTop = 25F
 //        chart.axisRight.zeroLineColor = R.color.colorPrimary
 //        chart.axisLeft.zeroLineColor = R.color.grey
         chart.axisRight.setDrawTopYLabelEntry(false)

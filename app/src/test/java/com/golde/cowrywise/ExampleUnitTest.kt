@@ -1,4 +1,4 @@
-package com.golde.cowries
+package com.golde.cowrywise
 
 import org.junit.Test
 
