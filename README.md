@@ -1,1 +1,1 @@
-# CowriesTest
+# CowryWise Test
