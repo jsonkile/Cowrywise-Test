@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cowrywise</string>
+    <string name="app_name">Cowrywise Test App</string>
     <string name="signup">Sign up</string>
     <string name="cc">Currency \nCalculator
         <font color='#0CD599'>.</font>
@@ -10,6 +10,13 @@
     <string name="email_info">
         <u>Get rate alerts straight to your email inbox</u>
     </string>
-    <string name="select_currency">Select currency</string>
-    <string name="api_key_message">Due to limited API calls provided by Fixer.io, i have provided this page to avoid any future app crashes. Please enter your own active API key from Fixer.io. </string>
+
+
+    <string name="past_thirty_days">Past 30 days</string>
+    <string name="past_ninety_days">Past 90 days</string>
+    <string name="convert">Convert</string>
+    <string name="usd">USD</string>
+    <string name="api">API</string>
+    <string name="reload">Refresh</string>
+    <string name="submit">Update</string>
 </resources>

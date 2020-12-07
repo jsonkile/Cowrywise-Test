@@ -7,13 +7,13 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="md_corner_radius">16dp</item>
+        <item name="md_corner_radius">5dp</item>
         <item name="md_color_title">@color/black</item>
         <item name="md_color_content">@color/grey2</item>
         <item name="md_color_button_text">@color/colorAccent2</item>
         <item name="md_font_title">@font/monts_bold</item>
         <item name="md_font_body">@font/monts_semibold</item>
-        <item name="md_font_button">@font/monts_regular</item>
+        <item name="md_font_button">@font/monts_bold</item>
 
     </style>
 
@@ -29,9 +29,54 @@
         <item name="android:fontFamily">@font/monts_bold</item>
     </style>
 
-    <style name="MontsTextAppearance">
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">@font/monts_medium</item>
+    <style name="HistoryButtons" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="elevation">0dp</item>
+        <item name="backgroundColor">@color/colorAccent2</item>
+        <item name="fontFamily">@font/monts_bold</item>
+        <item name="android:textSize">13sp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="ConvertButton" parent="@style/Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="elevation">0dp</item>
+        <item name="backgroundColor">@color/colorAccent</item>
+        <item name="fontFamily">@font/monts_bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">18dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="CurrencyButtons" parent="@style/Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="elevation">0dp</item>
+        <item name="backgroundColor">@color/colorAccent</item>
+        <item name="fontFamily">@font/monts_bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="iconGravity">end</item>
+        <item name="icon">@drawable/ic_keyboard_arrow_down_black_24dp</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">18dp</item>
+        <item name="textAllCaps">true</item>
+        <item name="iconTint">@color/grey</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:textColor">@color/grey2</item>
+    </style>
+
+    <style name="AppTheme.FullScreenDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
     </style>
 
 </resources>
